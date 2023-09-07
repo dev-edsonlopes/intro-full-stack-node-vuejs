@@ -2,6 +2,14 @@
   <div class="users">
     <div class="container">
       <section>
+        <h5 class="title">Novo Usuário</h5>
+        <form @submit.prevent="createdUsers">
+          <input type="text" placeholder="Nome" v-model="form.name" />
+          <input type="email" placeholder="E-mail" v-model="form.email" />
+          <button type="submit">Adicionar</button>
+        </form>
+      </section>
+      <section>
         <h5 class="title">Lista de Usuário</h5>
         <ul>
           <li v-for="user in users" :key="user.id">
@@ -16,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import axios from "@/utils/axios";
 
 interface User {
@@ -29,6 +37,10 @@ export default defineComponent({
   data() {
     return {
       users: [] as User[],
+      form: {
+        name: "",
+        email: "",
+      },
     };
   },
 
@@ -39,11 +51,22 @@ export default defineComponent({
   methods: {
     async fetchUsers() {
       try {
-        const { data } = await axios.get('/users');
+        const { data } = await axios.get("/users");
         this.users = data;
-      } catch(error) {
+      } catch (error) {
         console.warn(error);
-      };
+      }
+    },
+
+    async createdUsers() {
+      try {
+        const { data } = await axios.post("/users", this.form);
+        this.users.push(data);
+        this.form.name = "";
+        this.form.email = "";
+      } catch (error) {
+        console.warn(error);
+      }
     },
   },
 });
@@ -133,7 +156,7 @@ li {
 
 .destroy:before,
 .destroy:after {
-  content: '';
+  content: "";
   width: 3px;
   height: 13px;
   background-color: #ececf6;
@@ -155,4 +178,3 @@ li {
   background-color: #984848;
 }
 </style>
-
